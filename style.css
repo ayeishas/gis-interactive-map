@@ -1,0 +1,190 @@
+/* position codes for the map */
+#map {
+position: absolute;
+top: 0;
+bottom: 0;
+width: 100%;
+}
+
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+/* position codes for the legend box */
+
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 18px;
+  height: 135px;
+  left: 20px;
+  margin-bottom: 40px;
+  width: 200px;
+  font-size: 1em;
+  font-family: "Fira Sans", sans-serif;
+}
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}
+
+/* position codes for the title bar with title and sub-titles */
+
+#title {
+  top: 0;
+  left: 20px;
+  height: 110px;
+  margin-top: 20px;
+  width: 780px;
+  padding: 5px;
+  font-family: "Fira Sans", sans-serif;
+}
+
+/* position codes for the information box */
+
+#info-box {
+  top: 0;
+  left: 20px;
+  height: 280px;
+  margin-top: 150px;
+  width: 360px;
+  padding: 5px;
+  font-family: "Fira Sans", sans-serif;
+}
+
+/* style codes for the heading fonts etc. used within */
+
+h1 {
+  font-style: normal;
+  margin: 10px;
+  font-size: 1.3em;
+  text-align: left;
+  color: #0A00A2;
+}
+
+h2 {
+  margin: 10px;
+  font-size: 1.2em;
+  text-align: left;
+  color: #0E590E;
+}
+
+h3 {
+  margin: 10px;
+  font-size: 1em;
+  text-align: left;
+  font-style: normal;
+}
+
+h4 {
+  margin: 10px;
+  font-size: 0.9em;
+  text-align: left;
+  font-style: normal;
+}
+
+ul {
+   margin: 10px;
+   font-size: 0.9em;
+   text-align: left;
+  }
+
+p {
+   margin: 10px;
+   font-size: 0.6em;
+   text-align: left;
+  }
+
+sub-text {
+   margin: 10px;
+   font-size: 0.6em;
+   text-align: left;
+  }
+
+  /* position codes for the credits box */
+
+#credits {
+  right: 20px;
+  height: 80px;
+  margin-bottom: 40px;
+  width: 300px;
+  font-family: "Fira Sans", sans-serif;
+  padding: 5px
+}
+
+/* position codes for the chart box */
+
+#chart {
+  top: 0px;
+  right: 20px;
+  height: 255px;
+  margin-top: 330px;
+  width: 300px;
+  font-family: "Fira Sans", sans-serif;
+  padding: 5px;
+  opacity: 0.8
+}
+
+/* Codes for the pop up info */
+.mapboxgl-popup {
+   max-width: 200px;
+}
+.mapboxgl-popup-content {
+   text-align: left;
+   padding: 20px;
+   font-family: 'Fira Sans', sans-serif;
+}
+
+/* position codes for the selection box menu  */
+
+#menu {
+  background: #fff;
+  position: absolute;
+  z-index: 1;
+  bottom: 210px;
+  left: 20px;
+  border-radius: 3px;
+  width: 215px;
+  border: 1px solid rgba(0,0,0,0.4);
+  font-family: 'Fira Sans', sans-serif;
+}
+#menu a {
+  font-size: 13px;
+  color: #404040;
+  display: block;
+  margin: 0;
+  padding: 0;
+  padding: 10px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+#menu a:last-child {
+  border: none;
+}
+
+#menu a:hover {
+  background-color: #f8f8f8;
+  color: #404040;
+}
+
+#menu a.active {
+  background-color: #3887be;
+  color: #ffffff;
+}
+
+#menu a.active:hover {
+  background: #3074a4;
+}

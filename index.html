@@ -1,0 +1,331 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!--Header section/ not displayed in the site-->
+<head>
+  <meta charset='utf-8' />
+  <title>Ayeisha-Interactive-Map-A3</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.1/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <!-- Geocoder scripts -->
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css' type='text/css' />
+
+</head>
+
+<!--Body section-->
+<body>
+
+  <div id='map'></div>
+  <div class='map-overlay' id='legend'>
+    <h3>Legend</h3>
+  </div>
+
+  <!--Text for the title section -->
+  <div class='map-overlay' id='title'>
+    <h2>Living in Melbourne CBD and don't know where to take your furry friend?</h2>
+    <h3><i>Use this interactive map of dog friendly areas to locate a nice area to play!</i></h3>
+    <p>Interactive Mapping Assignment, Cartography and Visualisation, Semester 2 - 2019</p>
+  </div>
+
+  <!--adding in small image icons and text information to the info box!-->
+  <div class='map-overlay' id='info-box'>
+    <img src = "https://user-images.githubusercontent.com/56924118/67397492-f7d0ea80-f5f4-11e9-800f-3c488913e6a2.png"
+    height = '50' width '50'>
+    <img src = 'https://user-images.githubusercontent.com/56924118/67397886-952c1e80-f5f5-11e9-8f77-6dbabd3f0dc5.png'
+    height = '50' width '50'>
+    <img src = 'https://user-images.githubusercontent.com/56924118/67441946-a3f0f080-f64a-11e9-95b8-bbb7db152ef4.png'
+    height = '50' width '50'>
+    <img src = 'https://user-images.githubusercontent.com/56924118/67441948-a5221d80-f64a-11e9-805e-03a4230dcc9e.png'
+    height = '50' width '50'>
+    <img src = 'https://user-images.githubusercontent.com/56924118/67441949-a5bab400-f64a-11e9-9e6c-172971ebff84.png'
+    height = '50' width '50'>
+    <h3>Functions this map has to offer!</h3>
+    <ul><!-- unordered list with bullet points -->
+      <li>Pop up information on park locations</li>
+      <li>Information from Super Sunday Bike Count at survey locations</li>
+      <li>Zoom to your favourite site to see the detailed tree canopy</li>
+      <li>Turn on/off extra layers using the buttons below!</li>
+      <li>Search and zoom to your house to see how far away you are from a dog park!</li>
+    </ul>
+  </div>
+
+<!--Text for the credits section -->
+  <div class='map-overlay' id='credits'>
+    <p>
+      <b>Dog hotspots:</b> Determined from high frequency locations of recorded dog walkers and vacinity to available dog parks. <br>
+      <b>Data Source:</b> Victorian Government, Data VIC and City of Melbourne, Open Data. <br>
+      <b>Map created by:</b> Ayeisha Sheldon, 2019
+    </p>
+  </div>
+
+  <!--Div for Google Chart -->
+  <div class='map-overlay' id='chart'>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div id="chart_div"></div>
+  </div>
+
+<!--Button to turn layers on/ off-->
+  <nav id="menu"></nav>
+
+
+<!-- ALL SCRIP CODES BELOW -->
+<script>
+//Load in my custom styled MapBox map with layers and load basic functions
+mapboxgl.accessToken = 'pk.eyJ1IjoiYXllaXNoYXMiLCJhIjoiY2swb2ZreW10MGE2bTNjbXM1MmpjeWsxNyJ9.Nybdrgtg-8TnRU4xd8Lcfw';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/ayeishas/ck1refqf60ip91cpey3ub3bd9'
+});
+
+// load the map
+map.on('load', function() {
+
+// legend styling to match layers (couldn't work out how to add in an icon for the Survey Locations, so just left it black!)
+var layers = ['Survey Locations', 'Dog offleash zones', 'Restricted dog zones', 'Open-public space (Dog onleash)'];
+var colors = ['#000000', '#ffff00', '#f66a6a', '#a5e07b'];
+
+for (i = 0; i < layers.length; i++) {
+ var layer = layers[i];
+ var color = colors[i];
+ var item = document.createElement('div');
+ var key = document.createElement('span');
+ key.className = 'legend-key';
+ key.style.backgroundColor = color;
+ var value = document.createElement('span');
+ value.innerHTML = layer;
+ item.appendChild(key);
+ item.appendChild(value);
+ legend.appendChild(item);
+}
+
+// navigation control added
+map.addControl(new mapboxgl.NavigationControl());
+
+//CURSER
+// Change the icon to a pointer icon when you mouse over a building. Layer; dog zones & open space
+map.on('mouseenter', 'dogwalking-zones-4t730z', function () {
+  map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseenter', 'open-publicspace-84ertb', function () {
+  map.getCanvas().style.cursor = 'pointer';
+});
+// Change it back to a pan icon when it leaves. Layer; dog zones & open space
+map.on('mouseleave', 'dogwalking-zones-4t730z', function () {
+  map.getCanvas().style.cursor = '';
+});
+map.on('mouseleave', 'open-publicspace-84ertb', function () {
+  map.getCanvas().style.cursor = '';
+});
+
+// POP UP
+// pop up info for the open-space park locations, also showed link to image URL
+map.on('click', 'open-publicspace-84ertb', function (e) {new mapboxgl.Popup()
+  .setLngLat(e.lngLat)
+  .setHTML(
+    "<b>Park Name:</b>" + "<br>" + e.features[0].properties.PARK_NAME + "<br>" +
+    "Click to see " +
+    '<a href="' + e.features[0].properties.Image_URL + '">' + "Image" + '</a>')
+  .addTo(map);
+});
+
+//pop up info for Sunday Bike count numbers
+map.on('click', 'sunday-bikecount2017-3xuwsm', function (e) {new mapboxgl.Popup()
+  .setLngLat(e.lngLat)
+  .setHTML(
+    "<b>Recorded count at each location:</b>" + "<br>" +
+    "Dog walker: " + e.features[0].properties.dog + "<br>" +
+    "Runner: " + e.features[0].properties.runner + "<br>" +
+    "Walker: " + e.features[0].properties.walker + "<br>" +
+    "Bike rider: " + e.features[0].properties.bicycle + "<br>" +
+    "<p>Based on data from the Super Sunday Bike Count (Nov 2017)</p>")
+  .addTo(map);
+});
+
+// final closure for the load map funcation- all code above here
+});
+</script>
+
+<script type="text/javascript">
+// Script to load Google charts (top right had side)
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values for Sunday Bike Count of dog walkers at each survey lcoation
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+  ['Station', 'Total number of dog walkers', { role: 'style' }],
+  ['1', 4, 'color: #4775b5'],
+  ['2', 1, 'color: #4775b5'],
+  ['3', 4, 'color: #4775b5'],
+  ['4', 11, 'color: #4775b5'],
+  ['5', 62, 'color: #4775b5'],
+  ['6', 48, 'color: #4775b5'],
+  ['7', 9, 'color: #4775b5'],
+  ['8', 26, 'color: #4775b5']
+]);
+
+// edit title, style and size of chart
+  var options = {
+    chartArea: {
+      width: 250,
+      height:150
+    },
+    'title':'Total number of dog walkers recorded at each survey location',
+    'width':300,
+    'height':250,
+    legend: 'none',
+    bar: {groupWidth: '90%'},
+    titleTextStyle: {
+        color: 'black',
+        fontName: 'Fira Sans',
+        fontSize: 12,
+        bold: true
+      },
+      vAxis: {
+        textStyle: {
+          fontName: 'Fira Sans',
+          height: 70,
+        }
+      },
+      hAxis: {
+      title: 'Data from survey undertaken during the Super Sunday Bike Count (Nov 2017)',
+      textStyle: {
+        fontName: 'Fira Sans',
+      },
+    }
+// final closure for the main funcation
+};
+// Display the chart inside the <div> element with id="chart_div"
+var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+chart.draw(data, options);
+}
+</script>
+
+
+<script>
+// adding buttons to show/ hide two additional layers
+// map load function
+map.on('load', function () {
+
+//for adding pedestrian_footpath layer
+  map.addSource('pedestrian_footpath', {
+    type: 'vector',
+    url: 'mapbox://ayeishas.1yortxf2/'
+  });
+  //styling layer!
+  map.addLayer({
+    'id': 'Pedestrian Paths',
+    'type': 'line',
+    'source': 'pedestrian_footpath',
+    'layout': {
+      'visibility': 'none',
+      'line-join': 'round',
+      'line-cap': 'round' },
+
+      'paint': {
+        'line-color': '#464343',
+        'line-width': 0.6,
+        'line-opacity': 0.7
+      },
+    'source-layer': 'pedestrian_footpath-9jcp5t'
+    });
+
+// for adding hot-spot location layer
+    map.addSource('hotspot_location', {
+      type: 'vector',
+      url: 'mapbox://ayeishas.2uw9sblg/'
+    });
+    map.addLayer({
+      'id': 'Dog Hotspots',
+      'type': 'fill',
+      'source': 'hotspot_location',
+      'layout': {
+        'visibility': 'none'},
+        //styling layer
+      'paint': {
+        'fill-antialias': true,
+        'fill-opacity': 0.6,
+        'fill-color': '#a7a9ab',
+        'fill-outline-color':'#000000'
+      },
+      'source-layer': 'hotspot_locations-9ul2po'
+      });
+//map load functin end bracket
+});
+// put button names in tuple here
+var toggleableLayerIds = [ 'Pedestrian Paths', 'Dog Hotspots'];
+
+//setting proprties for the button
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+var id = toggleableLayerIds[i];
+
+var link = document.createElement('a');
+link.href = '#';
+link.className = '';
+link.textContent = id;
+
+link.onclick = function (e) {
+var clickedLayer = this.textContent;
+e.preventDefault();
+e.stopPropagation();
+
+var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+if (visibility === 'visible') {
+map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+this.className = '';
+} else {
+this.className = 'active';
+map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+}
+};
+
+var layers = document.getElementById('menu');
+layers.appendChild(link);
+}
+// final end of script
+</script>
+
+<script>
+// geocoder search function (top right hand side)
+var geocoder = new MapboxGeocoder({ // Initialize the geocoder
+  accessToken: mapboxgl.accessToken = 'pk.eyJ1IjoiYXllaXNoYXMiLCJhIjoiY2swb2ZreW10MGE2bTNjbXM1MmpjeWsxNyJ9.Nybdrgtg-8TnRU4xd8Lcfw',
+  mapboxgl: mapboxgl,
+  marker: false, // Do not use the default marker style
+  });
+
+  // Add the geocoder to the map
+map.addControl(geocoder);
+
+// After the map style has loaded on the page, add a source layer and default styling for a single point
+map.on('load', function() {
+  map.addSource('single-point', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  });
+// styling the point that comes up when searching for location
+  map.addLayer({
+    id: 'point',
+    source: 'single-point',
+    type: 'circle',
+    paint: {
+      'circle-radius': 5,
+      'circle-color': '#448ee4'
+    }
+  });
+  geocoder.on('result', function(e) {
+    map.getSource('single-point').setData(e.result.geometry);
+  });
+});
+
+</script>
+
+</body>
+</html>
